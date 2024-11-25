@@ -1,6 +1,8 @@
 <script lang="ts">
   import type { Snippet } from "svelte";
 
+  import { Header } from "$components";
+
   import "../app.css";
 
   interface Props {
@@ -10,4 +12,5 @@
   let { children }: Props = $props();
 </script>
 
+<Header />
 {@render children()}
