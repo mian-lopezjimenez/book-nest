@@ -8,6 +8,12 @@
   }
 
   let { isRegistration = true, form }: Props = $props();
+  let {
+    password = "",
+    name = "",
+    email = "",
+    passwordConfirmation = "",
+  } = form ?? {};
 
   const text: string = isRegistration ? "Register" : "Login";
 </script>
@@ -26,17 +32,23 @@
       {/if}
 
       {#if isRegistration}
-        <input placeholder="Name" type="text" name="name" />
+        <input placeholder="Name" type="text" name="name" value={name} />
       {/if}
 
-      <input placeholder="Email" type="email" name="email" />
-      <input placeholder="Password" type="password" name="password" />
+      <input placeholder="Email" type="email" name="email" value={email} />
+      <input
+        placeholder="Password"
+        type="password"
+        name="password"
+        value={password}
+      />
 
       {#if isRegistration}
         <input
           placeholder="Confirm password"
           type="password"
           name="passwordConfirmation"
+          value={passwordConfirmation}
         />
       {/if}
 

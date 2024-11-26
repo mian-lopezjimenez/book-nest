@@ -6,7 +6,7 @@
   import "../app.css";
 
   let { children, data } = $props();
-  let { session, supabase, user } = $derived(data);
+  let { session, supabase } = $derived(data);
 
   $effect(() => {
     const { data } = supabase.auth.onAuthStateChange((_, newSession) => {
