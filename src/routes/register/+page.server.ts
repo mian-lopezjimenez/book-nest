@@ -1,6 +1,12 @@
-import { type Actions } from "@sveltejs/kit";
+import { fail, redirect, type Actions } from "@sveltejs/kit";
+
+import { createClient } from "@supabase/supabase-js";
 
 import { Status } from "$types/enums";
+import {
+  PUBLIC_SUPABASE_ANON_KEY,
+  PUBLIC_SUPABASE_URL,
+} from "$env/static/public";
 
 interface ResponseObject {
   status: Status;
@@ -8,13 +14,13 @@ interface ResponseObject {
 }
 
 export const actions: Actions = {
-  default: async ({ request }) => {
-    const data: FormData = await request.formData();
+  default: async ({ request, locals: { supabase } }) => {
+    const formData: FormData = await request.formData();
 
-    const name = data.get("name") as string;
-    const email = data.get("email") as string;
-    const password = data.get("password") as string;
-    const passwordConfirmation = data.get("passwordConfirmation") as string;
+    const name = formData.get("name") as string;
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
+    const passwordConfirmation = formData.get("passwordConfirmation") as string;
 
     const responseObject: ResponseObject = {
       status: Status.OK,
@@ -47,6 +53,17 @@ export const actions: Actions = {
       return responseObject;
     }
 
-    return responseObject;
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+    });
+
+    if (error || !data.user) {
+      console.log(`There has been an error: ${error}`);
+      responseObject.status = Status.SERVER_ERROR;
+      return fail(400, responseObject as any);
+    }
+
+    redirect(303, "/private/dashboard");
   },
 };

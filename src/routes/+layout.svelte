@@ -1,15 +1,22 @@
 <script lang="ts">
-  import type { Snippet } from "svelte";
+  import { invalidate } from "$app/navigation";
 
   import { Header } from "$components";
 
   import "../app.css";
 
-  interface Props {
-    children: Snippet;
-  }
+  let { children, data } = $props();
+  let { session, supabase, user } = $derived(data);
 
-  let { children }: Props = $props();
+  $effect(() => {
+    const { data } = supabase.auth.onAuthStateChange((_, newSession) => {
+      if (newSession?.expires_at !== session?.expires_at) {
+        invalidate("supabase:auth");
+      }
+    });
+
+    return () => data.subscription.unsubscribe();
+  });
 </script>
 
 <Header />
