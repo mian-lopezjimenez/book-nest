@@ -16,6 +16,8 @@ const config = {
       $components: "src/lib/components",
       $assets: "src/lib/assets",
       $types: "src/lib/types",
+      $state: "src/lib/state",
+      $db: "src/lib/database/db.ts",
     },
   },
 };

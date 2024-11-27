@@ -1,6 +1,7 @@
 import { fail, redirect, type Actions } from "@sveltejs/kit";
 
 import { Status } from "$types/enums";
+import { PUBLIC_FRONTEND_URL } from "$env/static/public";
 
 interface ResponseObject {
   email: string;
@@ -12,7 +13,7 @@ interface ResponseObject {
 }
 
 export const actions: Actions = {
-  default: async ({ request, locals: { supabase } }) => {
+  signInWithPassword: async ({ request, locals: { supabase } }) => {
     const formData: FormData = await request.formData();
 
     const email = formData.get("email") as string;
@@ -51,5 +52,19 @@ export const actions: Actions = {
     }
 
     redirect(303, "/private/dashboard");
+  },
+  googleLogin: async ({ locals: { supabase } }) => {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${PUBLIC_FRONTEND_URL}/auth/callback`,
+      },
+    });
+
+    if (error) {
+      return fail(400, { message: "Something when wrong with Google login" });
+    }
+
+    redirect(303, data.url);
   },
 };

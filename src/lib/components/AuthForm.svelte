@@ -22,7 +22,11 @@
   <h1 class="mb-l">{text}</h1>
 
   <div class="form-and-social-login">
-    <form class="auth-form" method="POST">
+    <form
+      class="auth-form"
+      method="POST"
+      action={isRegistration ? "" : "/login/?/signInWithPassword"}
+    >
       {#if form && form.errors.length > 0}
         {#each form.errors as error}
           <div class="auth-error">
@@ -64,7 +68,12 @@
     </form>
 
     <div class="social-login">
-      <!-- TODO: Add social login -->
+      <form
+        method="POST"
+        action={isRegistration ? "/login?/googleLogin" : "?/googleLogin"}
+      >
+        <Button type="submit">Log In using Google</Button>
+      </form>
     </div>
   </div>
 </div>

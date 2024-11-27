@@ -1,6 +1,11 @@
 <script lang="ts">
+  import { Button, Link } from "$components";
+  import { getUserState } from "$state/user-state.svelte";
+
   import bookNestLogo from "$assets/app-logo.svg";
-  import { Link } from "$components";
+
+  let userState = getUserState();
+  let { user, userName } = $derived(userState);
 </script>
 
 <header>
@@ -10,12 +15,25 @@
 
   <nav>
     <ul>
-      <li>
-        <Link href="/register" variant="menu">Create account</Link>
-      </li>
-      <li>
-        <Link href="/login" variant="secondary menu">Login</Link>
-      </li>
+      {#if !user}
+        <li>
+          <Link href="/register" variant="menu">Create account</Link>
+        </li>
+        <li>
+          <Link href="/login" variant="secondary menu">Login</Link>
+        </li>
+      {/if}
+
+      {#if user}
+        <li>
+          {userName}
+        </li>
+        <li>
+          <Button onclick={() => userState.logout()} variant="menu"
+            >Logout</Button
+          >
+        </li>
+      {/if}
     </ul>
   </nav>
 </header>
@@ -29,8 +47,9 @@
   }
 
   ul {
-    display: flex;
+    align-items: center;
     column-gap: 24px;
+    display: flex;
   }
 
   .logo {
