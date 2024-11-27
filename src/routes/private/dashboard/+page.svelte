@@ -1,12 +1,51 @@
 <script lang="ts">
+  import Icon from "@iconify/svelte";
+
   import { getUserState } from "$state/user-state.svelte";
 
   const userState = getUserState();
-  let { books } = $derived(userState);
+  let { userName } = $derived(userState);
 </script>
 
-<ul>
-  {#each books as { title, id } (id)}
-    <li>{title}</li>
-  {/each}
-</ul>
+<div class="dashboard">
+  <div class="dashboard-header mb-m">
+    <a href="/private/scan-shelf" class="add-book">
+      <Icon icon="icons8:plus" width="72" height="72" />
+      <p>Add a book</p>
+    </a>
+
+    <div class="headline">
+      <h3 class="bold mb-xs">Welcome back, {userName}</h3>
+      <p>
+        There's nothing quite like the journey a good book can take you on. Have
+        you discovered any new favorites recently?
+      </p>
+    </div>
+  </div>
+</div>
+
+<style>
+  .dashboard-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .add-book {
+    align-items: center;
+    display: flex;
+    gap: 8px;
+    text-decoration: none;
+  }
+
+  .add-book p {
+    margin: 0;
+  }
+
+  .headline {
+    text-align: right;
+    max-width: 30%;
+    min-width: 300px;
+  }
+</style>
