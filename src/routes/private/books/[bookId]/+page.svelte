@@ -2,35 +2,85 @@
   import Icon from "@iconify/svelte";
 
   import { Button, StarRating } from "$components";
+  import { getUserState } from "$state/user-state.svelte";
+  import { invalidate } from "$app/navigation";
 
   interface Props {
     data: { book: Book };
   }
 
   let { data }: Props = $props();
+  let userState = getUserState();
   let book = $derived(data.book);
   let isEditMode = $state(false);
   let bookData = $state({
-    title: book.title,
-    author: book.author,
-    description: book.description ?? "",
-    genre: book.genre ?? "",
+    title: data.book.title,
+    author: data.book.author,
+    description: data.book.description ?? "",
+    genre: data.book.genre ?? "",
   });
 
-  function toggleEditMode() {
+  async function toggleEditModeAndSave() {
+    if (isEditMode) {
+      await userState.updateBook({ id: book.id, updateObject: bookData });
+      invalidate(`book:${book.id}`);
+    }
+
     isEditMode = !isEditMode;
+  }
+
+  async function updateRating(rating: number) {
+    await userState.updateBook({ id: book.id, updateObject: { rating } });
+    invalidate(`book:${book.id}`);
   }
 
   function goBack() {
     history.back();
   }
+
+  async function updateReadingStatus() {
+    const hasStartedReading: boolean = Boolean(book.started_reading_on);
+    const currentTimeStamp: string = new Date().toISOString();
+
+    if (hasStartedReading) {
+      await userState.updateBook({
+        id: book.id,
+        updateObject: {
+          finished_reading_on: currentTimeStamp,
+        },
+      });
+      invalidate(`book:${book.id}`);
+      return;
+    }
+
+    await userState.updateBook({
+      id: book.id,
+      updateObject: {
+        started_reading_on: currentTimeStamp,
+      },
+    });
+    invalidate(`book:${book.id}`);
+  }
 </script>
+
+{#snippet readingButton()}
+  {#if !book.finished_reading_on}
+    <Button
+      variant={book.started_reading_on ? "secondary" : "primary"}
+      onclick={updateReadingStatus}
+    >
+      {book.started_reading_on
+        ? "I finished reading this book"
+        : "I started reading this book"}
+    </Button>
+  {/if}
+{/snippet}
 
 {#snippet bookInfo()}
   <h2 class="book-title mt-m">{book.title}</h2>
   <p class="book-author">by {book.author}</p>
   <h4 class="mt-m mb-xs semi-bold">Your rating</h4>
-  <StarRating rating={book.rating ?? 0} />
+  <StarRating rating={book.rating ?? 0} updateDBRating={updateRating} />
   <p class="small-font">Click to {book.rating ? "change" : "give"} rating</p>
 
   {#if book.description}
@@ -43,13 +93,7 @@
     </button>
   {/if}
 
-  {#if !book.finished_reading_on}
-    <Button variant="secondary" onclick={() => {}}>
-      {book.started_reading_on
-        ? "I finished reading this book"
-        : "I started reading this book"}
-    </Button>
-  {/if}
+  {@render readingButton()}
 
   {#if book.genre}
     <h4 class="mt-m mb-xs semi-bold">Genre</h4>
@@ -76,7 +120,7 @@
     </div>
 
     <h4 class="mt-m mb-xs semi-bold">Your rating</h4>
-    <StarRating rating={book.rating ?? 0} />
+    <StarRating rating={book.rating ?? 0} updateDBRating={updateRating} />
     <p class="small-font">Click to {book.rating ? "change" : "give"} rating</p>
 
     <h4 class="mt-m mb-xs semi-bold">Description</h4>
@@ -87,13 +131,7 @@
       placeholder="Give a description of the book..."
     ></textarea>
 
-    {#if !book.finished_reading_on}
-      <Button variant="secondary" onclick={() => {}}>
-        {book.started_reading_on
-          ? "I finished reading this book"
-          : "I started reading this book"}
-      </Button>
-    {/if}
+    {@render readingButton()}
 
     {#if book.genre}
       <h4 class="mt-m mb-xs semi-bold">Genre</h4>
@@ -121,7 +159,7 @@
       {/if}
 
       <div class="buttons-container mt-m">
-        <Button variant="secondary" onclick={toggleEditMode}
+        <Button variant="secondary" onclick={toggleEditModeAndSave}
           >{isEditMode ? "Save changes" : "Edit"}</Button
         >
         <Button variant="danger" onclick={() => {}}>Delete</Button>

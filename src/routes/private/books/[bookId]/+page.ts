@@ -1,9 +1,11 @@
 import { error } from "@sveltejs/kit";
 import type { PageLoad } from "./$types";
 
-export const load: PageLoad = async ({ parent, params }) => {
+export const load: PageLoad = async ({ parent, params, depends }) => {
   const { supabase } = await parent();
   const { bookId } = params;
+
+  depends(`book:${bookId}`);
 
   const { data } = await supabase
     .from("books")

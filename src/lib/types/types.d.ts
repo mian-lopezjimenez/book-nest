@@ -13,3 +13,5 @@ interface Book {
   title: string;
   user_id: string;
 }
+
+type UpdatableBookFields = Partial<Omit<Book, "id" | "user_id" | "created_at">>;

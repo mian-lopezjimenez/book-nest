@@ -118,6 +118,31 @@ export class UserState {
     return mostCommonGenre || null;
   }
 
+  async updateBook({
+    id,
+    updateObject,
+  }: {
+    id: number;
+    updateObject: UpdatableBookFields;
+  }) {
+    if (!this.supabase) return;
+
+    const { status, error } = await this.supabase
+      .from("books")
+      .update(updateObject)
+      .eq("id", id);
+
+    if (status === 204 && !error) {
+      this.books = this.books.map((book) => {
+        if (book.id === id) {
+          return { ...book, ...updateObject };
+        }
+
+        return book;
+      });
+    }
+  }
+
   async logout() {
     await this.supabase?.auth.signOut();
     goto("/login");
