@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { StarRating } from "$components";
+
   interface Props {
     book: Book;
   }
@@ -11,6 +13,7 @@
     started_reading_on,
     cover_image,
     author,
+    rating,
   } = book;
   let bookStatus = $derived.by(() => {
     if (finished_reading_on) {
@@ -41,7 +44,7 @@
   <div class="book-info">
     <h4>{title}</h4>
     <p class="mb-s">{author}</p>
-    <p>Rating: {book.rating}</p>
+    <StarRating {rating} isReadOnly />
   </div>
 </a>
 
