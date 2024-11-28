@@ -9,7 +9,7 @@
 </script>
 
 <header>
-  <a href="/">
+  <a href={user ? "/private/dashboard" : "/"}>
     <img src={bookNestLogo} class="logo" alt="Go to home" />
   </a>
 
