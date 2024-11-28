@@ -44,7 +44,7 @@
   <div class="book-info">
     <h4>{title}</h4>
     <p class="mb-s">{author}</p>
-    <StarRating {rating} isReadOnly />
+    <StarRating rating={rating ?? 0} isReadOnly />
   </div>
 </a>
 
@@ -80,9 +80,10 @@
 
   .book-info {
     background-color: rgba(0, 0, 0, 0.4);
+    border-radius: 12px;
     height: 100%;
-    width: 100%;
     padding: 60px 16px 0 16px;
+    width: 100%;
   }
 
   .book-info h4 {

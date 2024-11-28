@@ -2,7 +2,7 @@
   import Icon from "@iconify/svelte";
 
   import { getUserState } from "$state/user-state.svelte";
-  import { BookCard } from "$components";
+  import { BookCategory } from "$components";
 
   const userState = getUserState();
   let { books, userName } = $derived(userState);
@@ -24,9 +24,7 @@
     </div>
   </div>
 
-  {#each books as book (book.id)}
-    <BookCard {book} />
-  {/each}
+  <BookCategory categoryName="Your favorite books" books={books.slice(0, 10)} />
 </div>
 
 <style>
