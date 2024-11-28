@@ -24,7 +24,22 @@
     </div>
   </div>
 
-  <BookCategory categoryName="Your favorite books" books={books.slice(0, 10)} />
+  <BookCategory
+    categoryName="Your favorite books"
+    books={userState.getHighestRatedBooks()}
+  />
+  <BookCategory
+    categoryName="Recent added, unread books"
+    books={userState.getUnreadBooks()}
+  />
+  <BookCategory
+    categoryName={`Your highest rated books from your favorite genre: ${userState.getFavoriteGenre()}`}
+    books={books.slice(0, 10)}
+  />
+  <BookCategory
+    categoryName="Currently reading"
+    books={userState.getCurrentlyReadingBooks()}
+  />
 </div>
 
 <style>

@@ -64,6 +64,60 @@ export class UserState {
     this.userName = names.data.name;
   }
 
+  getHighestRatedBooks() {
+    return this.books
+      .filter(({ rating }) => rating)
+      .toSorted((a, b) => b.rating! - a.rating!)
+      .slice(0, 10);
+  }
+
+  getUnreadBooks() {
+    return this.books
+      .filter(({ started_reading_on }) => !started_reading_on)
+      .toSorted(
+        (a, b) =>
+          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      )
+      .slice(0, 10);
+  }
+
+  getCurrentlyReadingBooks() {
+    return this.books
+      .filter(
+        ({ finished_reading_on, started_reading_on }) =>
+          !finished_reading_on && started_reading_on
+      )
+      .toSorted(
+        (a, b) =>
+          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      )
+      .slice(0, 10);
+  }
+
+  getFavoriteGenre() {
+    if (!this.books.length) return null;
+
+    const genreCounts: { [key: string]: number } = {};
+
+    this.books.forEach(({ genre }) => {
+      const genres = genre ? genre.split(",") : [];
+
+      genres.forEach((genre) => {
+        const trimmedGenre = genre.trim();
+
+        if (trimmedGenre) {
+          genreCounts[trimmedGenre] = (genreCounts[trimmedGenre] || 0) + 1;
+        }
+      });
+    });
+
+    const mostCommonGenre = Object.keys(genreCounts).reduce((a, b) => {
+      return genreCounts[a] > genreCounts[b] ? a : b;
+    });
+
+    return mostCommonGenre || null;
+  }
+
   async logout() {
     await this.supabase?.auth.signOut();
     goto("/login");
