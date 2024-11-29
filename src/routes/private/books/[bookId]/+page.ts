@@ -6,6 +6,7 @@ export const load: PageLoad = async ({ parent, params, depends }) => {
   const { bookId } = params;
 
   depends(`book:${bookId}`);
+  console.log("rerun");
 
   const { data } = await supabase
     .from("books")

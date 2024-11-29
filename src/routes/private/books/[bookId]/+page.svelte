@@ -1,6 +1,7 @@
 <script lang="ts">
   import Icon from "@iconify/svelte";
 
+  import { BookCoverDropzone } from "./components";
   import { Button, StarRating } from "$components";
   import { getUserState } from "$state/user-state.svelte";
   import { invalidate } from "$app/navigation";
@@ -166,16 +167,7 @@
       </div>
     </div>
 
-    <div class="book-cover">
-      {#if book.cover_image}
-        <img src={book.cover_image} alt="" />
-      {:else}
-        <button class="add-cover">
-          <Icon icon="bi:camera-fill" width="40" />
-          <p>Add book cover</p>
-        </button>
-      {/if}
-    </div>
+    <BookCoverDropzone bookId={book.id} coverImage={book.cover_image} />
   </div>
 </div>
 
@@ -187,32 +179,6 @@
 
   .book-info {
     width: 50%;
-  }
-
-  .book-cover {
-    align-items: center;
-    border-radius: 15px;
-    border: 1px solid black;
-    display: flex;
-    justify-content: center;
-    margin-left: 80px;
-    max-width: 450px;
-    min-height: 400px;
-    width: 40%;
-  }
-
-  .book-cover img {
-    object-fit: cover;
-    width: 100%;
-    height: 100%;
-    border-radius: inherit;
-  }
-
-  .add-cover {
-    align-items: center;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
   }
 
   .input {
