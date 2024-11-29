@@ -14,4 +14,9 @@ interface Book {
   user_id: string;
 }
 
+interface OpenAIBook {
+  bookTitle: string;
+  author: string;
+}
+
 type UpdatableBookFields = Partial<Omit<Book, "id" | "user_id" | "created_at">>;

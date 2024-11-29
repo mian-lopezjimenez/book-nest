@@ -186,6 +186,41 @@ export class UserState {
     goto("/private/dashboard");
   }
 
+  async addBookToLibrary(booksToAdd: OpenAIBook[]) {
+    const { user, supabase } = this;
+
+    if (!supabase || !user) return;
+
+    const processedBooks = booksToAdd.map((book) => {
+      const { author, bookTitle } = book;
+
+      return {
+        title: bookTitle,
+        author,
+        user_id: user.id,
+      };
+    });
+
+    const { error: insertError } = await supabase
+      .from("books")
+      .insert(processedBooks);
+
+    if (insertError) {
+      throw new Error(insertError.message);
+    }
+
+    const { data: newBooks, error: fetchError } = await supabase
+      .from("books")
+      .select("*")
+      .eq("user_id", user.id);
+
+    if (fetchError) {
+      throw new Error(fetchError.message);
+    }
+
+    this.books = newBooks;
+  }
+
   async logout() {
     await this.supabase?.auth.signOut();
     goto("/login");

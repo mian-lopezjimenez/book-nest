@@ -45,6 +45,7 @@
       accept="image/*"
       maxSize={MAX_IMAGE_SIZE}
       containerClasses="dropzone-cover"
+      disabled={isUploading}
     >
       {#if isUploading}
         <span class="loader"></span>
