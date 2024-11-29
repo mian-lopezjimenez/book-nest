@@ -163,7 +163,11 @@
         <Button variant="secondary" onclick={toggleEditModeAndSave}
           >{isEditMode ? "Save changes" : "Edit"}</Button
         >
-        <Button variant="danger" onclick={() => {}}>Delete</Button>
+        <Button
+          variant="danger"
+          onclick={() => userState.deleteBookFromLibrary(book.id)}
+          >Delete</Button
+        >
       </div>
     </div>
 

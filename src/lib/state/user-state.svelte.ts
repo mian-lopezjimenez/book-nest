@@ -171,6 +171,21 @@ export class UserState {
     return publicUrl;
   }
 
+  async deleteBookFromLibrary(bookId: number) {
+    if (!this.supabase) return;
+
+    const { status, error } = await this.supabase
+      .from("books")
+      .delete()
+      .eq("id", bookId);
+
+    if (status === 204 && !error) {
+      this.books = this.books.filter((book) => book.id !== bookId);
+    }
+
+    goto("/private/dashboard");
+  }
+
   async logout() {
     await this.supabase?.auth.signOut();
     goto("/login");
