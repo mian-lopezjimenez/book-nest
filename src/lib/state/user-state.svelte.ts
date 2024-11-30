@@ -95,7 +95,7 @@ export class UserState {
   }
 
   getFavoriteGenre() {
-    if (!this.books.length) return null;
+    if (this.books.filter((book) => book.genre).length === 0) return "";
 
     const genreCounts: { [key: string]: number } = {};
 
@@ -115,7 +115,19 @@ export class UserState {
       return genreCounts[a] > genreCounts[b] ? a : b;
     });
 
-    return mostCommonGenre || null;
+    return mostCommonGenre || "";
+  }
+
+  getBooksFromFavoriteGenre() {
+    const mostCommonGenre = this.getFavoriteGenre();
+
+    return this.books
+      .filter((book) => book.genre?.includes(mostCommonGenre))
+      .toSorted((a, z) => {
+        const ratingA = a.rating || 0;
+        const ratingZ = z.rating || 0;
+        return ratingZ - ratingA;
+      });
   }
 
   async updateBook({
@@ -219,6 +231,58 @@ export class UserState {
     }
 
     this.books = newBooks;
+  }
+
+  async updateAccountData({
+    email,
+    userName,
+  }: {
+    email: string;
+    userName: string;
+  }) {
+    if (!this.session) return;
+
+    try {
+      const response = await fetch("/api/update-account", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${this.session.access_token}`,
+        },
+        body: JSON.stringify({ email, userName }),
+      });
+
+      if (response.ok) {
+        this.userName = userName;
+
+        if (this.user) {
+          this.user.email = email;
+        }
+      }
+    } catch (error) {
+      console.log("Failed to update account.");
+    }
+  }
+
+  async deleteAccount() {
+    if (!this.session) return;
+
+    try {
+      const response = await fetch("/api/delete-account", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${this.session.access_token}`,
+        },
+      });
+
+      if (response.ok) {
+        await this.logout();
+        goto("/");
+      }
+    } catch (error) {
+      console.log("Failed to delete account.");
+    }
   }
 
   async logout() {

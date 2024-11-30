@@ -38,8 +38,6 @@ export const POST: RequestHandler = async ({ request }) => {
     ],
   });
 
-  console.log(response.choices[0].message);
-
   const booksArrayString: string | undefined =
     response.choices[0].message.content?.replace(/```json|```/g, "").trim();
 

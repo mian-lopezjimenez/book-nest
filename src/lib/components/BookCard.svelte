@@ -56,12 +56,11 @@
     display: flex;
     flex-direction: column;
     height: 300px;
+    width: 360px;
     min-width: 360px;
-    max-width: 450px;
     position: relative;
     text-align: left;
     text-decoration: none;
-    width: 100%;
   }
 
   .book-cover {

@@ -24,22 +24,41 @@
     </div>
   </div>
 
-  <BookCategory
-    categoryName="Your favorite books"
-    books={userState.getHighestRatedBooks()}
-  />
-  <BookCategory
-    categoryName="Recent added, unread books"
-    books={userState.getUnreadBooks()}
-  />
-  <BookCategory
-    categoryName={`Your highest rated books from your favorite genre: ${userState.getFavoriteGenre()}`}
-    books={books.slice(0, 10)}
-  />
-  <BookCategory
-    categoryName="Currently reading"
-    books={userState.getCurrentlyReadingBooks()}
-  />
+  {#if books.length}
+    {#if userState.getHighestRatedBooks().length}
+      <BookCategory
+        categoryName="Your favorite books"
+        books={userState.getHighestRatedBooks()}
+      />
+    {/if}
+
+    <BookCategory
+      categoryName="Recent added, unread books"
+      books={userState.getUnreadBooks()}
+    />
+
+    {#if userState.getFavoriteGenre()}
+      <BookCategory
+        categoryName={`Your highest rated books from your favorite genre: ${userState.getFavoriteGenre()}`}
+        books={userState.getBooksFromFavoriteGenre()}
+      />
+    {/if}
+
+    {#if userState.getCurrentlyReadingBooks().length}
+      <BookCategory
+        categoryName="Currently reading"
+        books={userState.getCurrentlyReadingBooks()}
+      />
+    {/if}
+  {:else}
+    <a class="upload-hint mt-l" href="/private/scan-shelf">
+      <h3>You have no books in your library. Click here to add some!</h3>
+      <div class="mt-m">
+        <Icon icon="icons8:plus" width="72" height="72" />
+        <p>Add books</p>
+      </div>
+    </a>
+  {/if}
 </div>
 
 <style>
@@ -65,5 +84,19 @@
     text-align: right;
     max-width: 30%;
     min-width: 300px;
+  }
+
+  .upload-hint {
+    display: flex;
+    text-decoration: none;
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .upload-hint div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 </style>
